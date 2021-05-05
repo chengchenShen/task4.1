@@ -3,6 +3,8 @@ package com.example.task41;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.PersistableBundle;
@@ -24,6 +26,7 @@ public class MainActivity extends AppCompatActivity {
     long stop_point;
     String min,input ;
     EditText work_out;
+    SharedPreferences sp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
         text_result = findViewById(R.id.text_result);
         work_out = findViewById(R.id.work_out);
 
-
+        upData();
 
         if(savedInstanceState!=null){
             String time_result = savedInstanceState.getString("result");
@@ -68,6 +71,13 @@ public class MainActivity extends AppCompatActivity {
 
             }
         }
+    }
+
+    public void upData() {
+        SharedPreferences sp = getSharedPreferences("MyDate", Context.MODE_PRIVATE);
+        String spent = sp.getString("min","");
+        String wk = sp.getString("input","");
+        text_result.setText("You spent " + spent + " on " + wk + " last time.");
     }
 
     @Override
@@ -121,6 +131,13 @@ public class MainActivity extends AppCompatActivity {
         input = work_out.getText().toString();
         chronometer.setBase(SystemClock.elapsedRealtime());
         text_result.setText("You spent " + min + " on " + input + " last time.");
+
+        sp = getSharedPreferences("MyDate", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sp.edit();
+        editor.putString("min" , min);
+        editor.putString("input" , input);
+        editor.apply();
+
         stop_point = 0;
         chronometer.stop();
         going = false;
@@ -128,6 +145,8 @@ public class MainActivity extends AppCompatActivity {
         changed =false;
         started =false;
     }
+
+
 
 
 }
